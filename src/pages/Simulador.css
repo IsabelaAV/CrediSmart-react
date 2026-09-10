@@ -1,0 +1,210 @@
+.simulador {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.simulador__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Selector de crédito ---------- */
+
+.simulador__opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.opcion-credito {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.opcion-credito:hover {
+  border-color: rgba(52, 84, 255, 0.4);
+}
+
+.opcion-credito--activa {
+  border-color: var(--brand);
+  background-color: var(--brand-soft);
+}
+
+.opcion-credito__icono {
+  font-size: 1.15rem;
+}
+
+.opcion-credito__texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.opcion-credito__texto strong {
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.opcion-credito__texto small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+/* ---------- Controles ---------- */
+
+.simulador__control-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.simulador__control-cabecera label {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.simulador__control-cabecera strong {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.simulador__limites {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.simulador__nota {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius);
+  background-color: var(--bg);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ---------- Tarjeta de resultado ---------- */
+
+.resultado {
+  position: sticky;
+  top: 90px;
+  padding: 1.9rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, #16204a 0%, #0a1024 100%);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+.resultado__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.resultado__cuota {
+  margin: 0.4rem 0 1.5rem;
+  font-size: clamp(2.1rem, 4.5vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.resultado__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.resultado__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.resultado__grid span {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.resultado__grid strong {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.resultado__grid small {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.resultado__barra {
+  height: 8px;
+  margin-top: 1.5rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.resultado__barra-capital {
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--mint);
+  transition: width 0.25s ease;
+}
+
+.resultado__leyenda {
+  margin-top: 0.55rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.resultado__disclaimer {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 940px) {
+  .simulador {
+    grid-template-columns: 1fr;
+  }
+
+  .resultado {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .simulador__opciones,
+  .resultado__grid {
+    grid-template-columns: 1fr;
+  }
+}
