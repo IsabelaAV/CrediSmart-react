@@ -27,8 +27,9 @@ function Simulador() {
   const [monto, setMonto] = useState(
     Math.round((creditoInicial.montoMin + creditoInicial.montoMax) / 2)
   );
+  // El plazo inicial se redondea a un múltiplo de 6 para que coincida con el paso del slider.
   const [plazo, setPlazo] = useState(
-    Math.round((creditoInicial.plazoMin + creditoInicial.plazoMax) / 2)
+    Math.round((creditoInicial.plazoMin + creditoInicial.plazoMax) / 12) * 6
   );
 
   const creditoActivo = creditos.find((credito) => credito.id === creditoId);
