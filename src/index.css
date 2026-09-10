@@ -328,6 +328,14 @@ textarea.campo__control {
   gap: 1.5rem;
 }
 
+.grid--creditos {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.seccion--gris {
+  background-color: #eef0f7;
+}
+
 .texto-muted {
   color: var(--muted);
 }

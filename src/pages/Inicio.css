@@ -105,14 +105,6 @@
 
 /* ---------- Bloques compartidos ---------- */
 
-.seccion--gris {
-  background-color: #eef0f7;
-}
-
-.grid--creditos {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-}
-
 .inicio__ver-todos {
   display: flex;
   justify-content: center;
