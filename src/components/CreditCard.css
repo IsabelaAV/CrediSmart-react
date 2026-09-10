@@ -1,0 +1,120 @@
+.credit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+  padding: 1.6rem;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.credit-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(52, 84, 255, 0.35);
+  box-shadow: var(--shadow);
+}
+
+.credit-card__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.credit-card__icono {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: var(--brand-soft);
+  font-size: 1.5rem;
+}
+
+.credit-card__titulo {
+  font-size: 1.2rem;
+}
+
+.credit-card__descripcion {
+  color: var(--muted);
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.credit-card__datos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background-color: var(--bg);
+}
+
+.credit-card__datos dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.credit-card__datos dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.credit-card__tasa {
+  color: var(--brand) !important;
+  font-size: 1.35rem;
+  font-weight: 800 !important;
+  line-height: 1.1;
+}
+
+.credit-card__rango {
+  grid-column: 1 / -1;
+}
+
+.credit-card__rango dd {
+  font-size: 0.95rem;
+}
+
+.credit-card__requisitos {
+  font-size: 0.87rem;
+  color: var(--muted);
+}
+
+.credit-card__requisitos-titulo {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.credit-card__requisitos li {
+  position: relative;
+  padding-left: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.credit-card__requisitos li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--mint);
+  font-weight: 700;
+}
+
+.credit-card__acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.credit-card__acciones .boton {
+  padding-inline: 0.75rem;
+  font-size: 0.92rem;
+}

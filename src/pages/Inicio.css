@@ -1,0 +1,205 @@
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+  background: radial-gradient(120% 120% at 85% 0%, #2440e0 0%, #131c38 45%, #0a1024 100%);
+  color: #fff;
+}
+
+.hero__contenido {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero__texto h1 {
+  margin-block: 1.25rem 1rem;
+  color: #fff;
+}
+
+.hero__texto h1 span {
+  color: var(--mint);
+}
+
+.hero__texto p {
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+}
+
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.hero__metricas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  padding: 1px;
+  border-radius: var(--radius-lg);
+  background-color: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.hero__metricas li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.4rem;
+  background-color: rgba(10, 16, 36, 0.75);
+}
+
+.hero__metricas strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.hero__metricas span {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- Ventajas ---------- */
+
+.ventajas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.ventaja {
+  padding: 1.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.ventaja__icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background-color: var(--mint-soft);
+  font-size: 1.3rem;
+}
+
+.ventaja h3 {
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+}
+
+.ventaja p {
+  font-size: 0.92rem;
+}
+
+/* ---------- Bloques compartidos ---------- */
+
+.seccion--gris {
+  background-color: #eef0f7;
+}
+
+.grid--creditos {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.inicio__ver-todos {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+/* ---------- Pasos ---------- */
+
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  counter-reset: paso;
+}
+
+.paso {
+  padding: 1.5rem;
+  border-top: 3px solid var(--brand);
+  border-radius: 0 0 var(--radius) var(--radius);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.paso__numero {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.85rem;
+  border-radius: 50%;
+  background-color: var(--brand-soft);
+  color: var(--brand-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.paso h3 {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.paso p {
+  font-size: 0.9rem;
+}
+
+/* ---------- CTA ---------- */
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(115deg, var(--brand) 0%, #6b4bff 100%);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+.cta h2 {
+  color: #fff;
+}
+
+.cta p {
+  margin-top: 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 980px) {
+  .hero__contenido {
+    grid-template-columns: 1fr;
+  }
+
+  .ventajas,
+  .pasos {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .ventajas,
+  .pasos,
+  .hero__metricas {
+    grid-template-columns: 1fr;
+  }
+}
