@@ -1,5 +1,4 @@
-// Fuente única de datos de los productos crediticios de CreditSmart.
-// Todos los montos están en pesos colombianos (COP) y las tasas son efectivas anuales (E.A.).
+// Fuente única de datos de los productos crediticios de CreditSmart
 
 export const creditos = [
   {
@@ -108,7 +107,7 @@ export const creditos = [
     montoMax: 15000000,
     plazoMin: 6,
     plazoMax: 24,
-    destacado: true,
+    destacado: false,
     descripcion:
       "Para negocios pequeños que necesitan inventario o herramientas. Aprobación con historial crediticio corto.",
     requisitos: ["Negocio en funcionamiento por más de 6 meses", "Registro fotográfico del negocio", "Cédula vigente"],
