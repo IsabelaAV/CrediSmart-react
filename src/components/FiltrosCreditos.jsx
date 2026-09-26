@@ -1,12 +1,7 @@
-import { categorias, ordenamientos, rangosMonto } from "../data/creditsData.js";
+import { ordenamientos, rangosMonto } from "../data/creditsData.js";
 import "./FiltrosCreditos.css";
 
-/**
- * Panel de filtros del catálogo.
- * Es un componente controlado: no guarda estado propio, solo muestra los valores
- * que recibe y avisa al padre cuando el usuario cambia alguno.
- */
-function FiltrosCreditos({ filtros, onCambiarFiltro, onLimpiar, hayFiltrosActivos }) {
+function FiltrosCreditos({ filtros, onCambiarFiltro, onLimpiar, hayFiltrosActivos, categorias }) {
   const { categoria, rango, orden } = filtros;
 
   return (

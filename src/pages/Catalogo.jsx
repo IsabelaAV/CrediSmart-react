@@ -3,16 +3,12 @@ import BarraBusqueda from "../components/BarraBusqueda.jsx";
 import CreditCard from "../components/CreditCard.jsx";
 import EstadoVacio from "../components/EstadoVacio.jsx";
 import FiltrosCreditos from "../components/FiltrosCreditos.jsx";
-import { creditos, rangosMonto } from "../data/creditsData.js";
+import { useCreditos } from "../hooks/useCreditos.js";
+import { rangosMonto } from "../data/creditsData.js";
 import "./Catalogo.css";
 
 const FILTROS_INICIALES = { categoria: "Todas", rango: "todos", orden: "tasa-asc" };
 
-/**
- * Quita tildes y pasa a minúsculas para que "credito" también encuentre "crédito".
- * normalize("NFD") separa la letra de su acento y el rango de caracteres
- * combinantes (U+0300 a U+036F) elimina esos acentos sueltos.
- */
 function normalizar(texto) {
   return texto
     .toLowerCase()
@@ -21,8 +17,11 @@ function normalizar(texto) {
 }
 
 function Catalogo() {
+  const { creditos, cargando, error } = useCreditos();
   const [busqueda, setBusqueda] = useState("");
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
+
+  const categorias = ["Todas", ...new Set(creditos.map((c) => c.categoria))];
 
   const cambiarFiltro = (campo, valor) => {
     setFiltros((anteriores) => ({ ...anteriores, [campo]: valor }));
@@ -39,11 +38,31 @@ function Catalogo() {
     filtros.rango !== FILTROS_INICIALES.rango ||
     filtros.orden !== FILTROS_INICIALES.orden;
 
+  if (cargando) {
+    return (
+      <section className="seccion container">
+        <div className="estado-carga">
+          <div className="estado-carga__spinner" />
+          <p>Cargando catálogo de créditos...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="seccion container">
+        <div className="alerta alerta--error" role="alert">
+          <span aria-hidden="true">⚠️</span>
+          <p>No pudimos cargar el catálogo. Verifica tu conexión e intenta de nuevo.</p>
+        </div>
+      </section>
+    );
+  }
+
   const rangoSeleccionado = rangosMonto.find((rango) => rango.id === filtros.rango);
   const textoBuscado = normalizar(busqueda.trim());
 
-  // Encadenamos .filter() y .sort() sobre una copia del array original.
-  // Se recalcula en cada render, por eso la búsqueda responde mientras se escribe.
   const resultados = creditos
     .filter((credito) => {
       const coincideTexto =
@@ -55,7 +74,6 @@ function Catalogo() {
       const coincideCategoria =
         filtros.categoria === "Todas" || credito.categoria === filtros.categoria;
 
-      // El crédito entra si su rango de montos se cruza con el rango elegido.
       const coincideMonto =
         credito.montoMin <= rangoSeleccionado.max && credito.montoMax >= rangoSeleccionado.min;
 
@@ -91,6 +109,7 @@ function Catalogo() {
           onCambiarFiltro={cambiarFiltro}
           onLimpiar={limpiarTodo}
           hayFiltrosActivos={hayFiltrosActivos}
+          categorias={categorias}
         />
       </div>
 
@@ -98,7 +117,7 @@ function Catalogo() {
         {resultados.length === 1
           ? "1 crédito encontrado"
           : `${resultados.length} créditos encontrados`}
-        {busqueda && <span> para “{busqueda}”</span>}
+        {busqueda && <span> para "{busqueda}"</span>}
       </p>
 
       {resultados.length > 0 ? (

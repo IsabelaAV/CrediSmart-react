@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import CampoFormulario from "../components/CampoFormulario.jsx";
-import { creditos } from "../data/creditsData.js";
+import { useCreditos } from "../hooks/useCreditos.js";
 import { formatearCOP, simularCredito } from "../utils/finanzas.js";
 import { validarSolicitud } from "../utils/validaciones.js";
+import { guardarSolicitud } from "../services/solicitudesService.js";
 import "./Solicitud.css";
 
 const FORMULARIO_VACIO = {
@@ -21,7 +22,6 @@ const FORMULARIO_VACIO = {
   aceptaTerminos: false,
 };
 
-/** Plazos disponibles (de 12 en 12 meses) dentro de los límites del crédito elegido. */
 function plazosDisponibles(credito) {
   if (!credito) return [12, 24, 36, 48, 60];
   const opciones = [];
@@ -31,10 +31,10 @@ function plazosDisponibles(credito) {
   return opciones;
 }
 
-function Solicitud({ solicitudes, onAgregarSolicitud }) {
+function Solicitud() {
   const { state } = useLocation();
+  const { creditos, cargando: cargandoCreditos, error: errorCreditos } = useCreditos();
 
-  // Si el usuario viene del simulador, el formulario arranca con esos valores.
   const valoresIniciales = {
     ...FORMULARIO_VACIO,
     creditoId: state?.creditoId ? String(state.creditoId) : "",
@@ -45,21 +45,22 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
   const [formulario, setFormulario] = useState(valoresIniciales);
   const [tocados, setTocados] = useState({});
   const [mensajeExito, setMensajeExito] = useState("");
+  const [guardando, setGuardando] = useState(false);
+  const [errorGuardar, setErrorGuardar] = useState("");
 
   const creditoSeleccionado = creditos.find(
-    (credito) => credito.id === Number(formulario.creditoId)
+    (credito) => credito.id === formulario.creditoId
   );
 
-  // Se valida en cada render, así los mensajes aparecen mientras el usuario escribe.
   const errores = validarSolicitud(formulario, creditoSeleccionado);
   const formularioValido = Object.keys(errores).length === 0;
 
-  // Solo mostramos el error si el campo ya fue tocado o si se intentó enviar.
   const errorDe = (campo) => (tocados[campo] ? errores[campo] : undefined);
 
   const cambiarCampo = (campo, valor) => {
     setFormulario((anterior) => ({ ...anterior, [campo]: valor }));
     setMensajeExito("");
+    setErrorGuardar("");
   };
 
   const marcarTocado = (campo) => {
@@ -70,9 +71,9 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
     setFormulario(FORMULARIO_VACIO);
     setTocados({});
     setMensajeExito("");
+    setErrorGuardar("");
   };
 
-  // Resumen en vivo: se recalcula al cambiar crédito, monto o plazo.
   const monto = Number(formulario.monto) || 0;
   const plazo = Number(formulario.plazo) || 0;
   const hayResumen = Boolean(creditoSeleccionado) && monto > 0 && plazo > 0;
@@ -80,11 +81,10 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
     ? simularCredito(monto, creditoSeleccionado.tasaEA, plazo)
     : { cuota: 0, totalPagado: 0, totalIntereses: 0 };
 
-  const manejarEnvio = (evento) => {
-    evento.preventDefault(); // evita que el navegador recargue la página
+  const manejarEnvio = async (evento) => {
+    evento.preventDefault();
 
     if (!formularioValido) {
-      // Marcamos todos los campos como tocados para mostrar todos los errores.
       const todos = Object.keys(FORMULARIO_VACIO).reduce(
         (acumulado, campo) => ({ ...acumulado, [campo]: true }),
         {}
@@ -93,29 +93,67 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
       return;
     }
 
-    const nuevaSolicitud = {
-      id: Date.now(),
-      radicado: `CS-${Date.now().toString().slice(-6)}`,
-      nombre: formulario.nombre.trim(),
-      email: formulario.email.trim(),
-      credito: creditoSeleccionado.nombre,
-      monto,
-      plazo,
-      cuota: resumen.cuota,
-      fecha: new Date().toLocaleDateString("es-CO", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }),
-    };
+    setGuardando(true);
+    setErrorGuardar("");
 
-    onAgregarSolicitud(nuevaSolicitud);
-    setFormulario(FORMULARIO_VACIO);
-    setTocados({});
-    setMensajeExito(
-      `¡Listo, ${nuevaSolicitud.nombre}! Radicamos tu solicitud ${nuevaSolicitud.radicado}. Te escribiremos a ${nuevaSolicitud.email}.`
-    );
+    try {
+      const nuevaSolicitud = {
+        radicado: `CS-${Date.now().toString().slice(-6)}`,
+        nombre: formulario.nombre.trim(),
+        email: formulario.email.trim(),
+        cedula: formulario.cedula.trim(),
+        telefono: formulario.telefono.trim(),
+        credito: creditoSeleccionado.nombre,
+        monto,
+        plazo,
+        cuota: resumen.cuota,
+        destino: formulario.destino.trim(),
+        empresa: formulario.empresa.trim(),
+        cargo: formulario.cargo.trim(),
+        ingresos: Number(formulario.ingresos),
+        fecha: new Date().toLocaleDateString("es-CO", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+      };
+
+      await guardarSolicitud(nuevaSolicitud);
+      setFormulario(FORMULARIO_VACIO);
+      setTocados({});
+      setMensajeExito(
+        `¡Listo, ${nuevaSolicitud.nombre}! Radicamos tu solicitud ${nuevaSolicitud.radicado}. Te escribiremos a ${nuevaSolicitud.email}.`
+      );
+    } catch {
+      setErrorGuardar(
+        "No pudimos guardar tu solicitud. Verifica tu conexión a internet e intenta de nuevo."
+      );
+    } finally {
+      setGuardando(false);
+    }
   };
+
+  if (cargandoCreditos) {
+    return (
+      <section className="seccion container">
+        <div className="estado-carga">
+          <div className="estado-carga__spinner" />
+          <p>Cargando formulario de solicitud...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (errorCreditos) {
+    return (
+      <section className="seccion container">
+        <div className="alerta alerta--error" role="alert">
+          <span aria-hidden="true">⚠️</span>
+          <p>No pudimos cargar los tipos de crédito. Verifica tu conexión e intenta de nuevo.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="seccion container">
@@ -131,7 +169,19 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
       {mensajeExito && (
         <div className="alerta alerta--exito" role="status">
           <span aria-hidden="true">✅</span>
-          <p>{mensajeExito}</p>
+          <div>
+            <p>{mensajeExito}</p>
+            <Link to="/mis-solicitudes" className="alerta__enlace">
+              Ver mis solicitudes →
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {errorGuardar && (
+        <div className="alerta alerta--error" role="alert">
+          <span aria-hidden="true">⚠️</span>
+          <p>{errorGuardar}</p>
         </div>
       )}
 
@@ -307,8 +357,12 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
             <button type="button" className="boton boton--secundario" onClick={limpiarFormulario}>
               Limpiar formulario
             </button>
-            <button type="submit" className="boton boton--primario" disabled={!formularioValido}>
-              Enviar solicitud
+            <button
+              type="submit"
+              className="boton boton--primario"
+              disabled={!formularioValido || guardando}
+            >
+              {guardando ? "Guardando..." : "Enviar solicitud"}
             </button>
           </div>
           {!formularioValido && (
@@ -353,33 +407,6 @@ function Solicitud({ solicitudes, onAgregarSolicitud }) {
               <p className="texto-muted">
                 Elige el tipo de crédito, el monto y el plazo para ver tu cuota mensual estimada.
               </p>
-            )}
-          </div>
-
-          <div className="historial">
-            <h3>Solicitudes enviadas ({solicitudes.length})</h3>
-            {solicitudes.length === 0 ? (
-              <p className="texto-muted">
-                Todavía no has enviado solicitudes en esta sesión. Las que envíes aparecerán aquí.
-              </p>
-            ) : (
-              <ul>
-                {solicitudes.map((solicitud) => (
-                  <li key={solicitud.id} className="historial__item">
-                    <div>
-                      <strong>{solicitud.radicado}</strong>
-                      <span className="texto-muted"> · {solicitud.fecha}</span>
-                    </div>
-                    <p className="texto-muted">
-                      {solicitud.credito} — {formatearCOP(solicitud.monto)} a {solicitud.plazo}{" "}
-                      meses
-                    </p>
-                    <p className="historial__cuota">
-                      Cuota: {formatearCOP(solicitud.cuota)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
             )}
           </div>
         </aside>

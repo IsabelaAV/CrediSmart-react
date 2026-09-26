@@ -9,6 +9,7 @@ const enlaces = [
   { to: "/catalogo", texto: "Catálogo" },
   { to: "/simulador", texto: "Simulador" },
   { to: "/solicitud", texto: "Solicitar crédito" },
+  { to: "/mis-solicitudes", texto: "Mis solicitudes" },
 ];
 
 function Navbar() {

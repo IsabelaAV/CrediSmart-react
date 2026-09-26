@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { creditos } from "../data/creditsData.js";
+import { useCreditos } from "../hooks/useCreditos.js";
 import "./Footer.css";
 
 const enlacesCompania = ["Sobre nosotros", "Tasas y tarifas", "Preguntas frecuentes", "Trabaja con nosotros"];
 const redes = ["f", "ig", "X", "in"];
 
 function Footer() {
+  const { creditos } = useCreditos();
   const anio = new Date().getFullYear();
 
   return (

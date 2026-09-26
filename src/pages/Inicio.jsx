@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import CreditCard from "../components/CreditCard.jsx";
-import { creditos } from "../data/creditsData.js";
+import { useCreditos } from "../hooks/useCreditos.js";
 import { formatearCOP } from "../utils/finanzas.js";
 import "./Inicio.css";
 
@@ -39,12 +39,34 @@ const pasos = [
 ];
 
 function Inicio() {
-  // Solo los créditos marcados como destacados, ordenados de la tasa más baja a la más alta.
+  const { creditos, cargando, error } = useCreditos();
+
+  if (cargando) {
+    return (
+      <section className="seccion container">
+        <div className="estado-carga">
+          <div className="estado-carga__spinner" />
+          <p>Cargando productos de crédito...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="seccion container">
+        <div className="alerta alerta--error" role="alert">
+          <span aria-hidden="true">⚠️</span>
+          <p>No pudimos cargar los productos. Verifica tu conexión e intenta de nuevo.</p>
+        </div>
+      </section>
+    );
+  }
+
   const destacados = creditos
     .filter((credito) => credito.destacado)
     .sort((a, b) => a.tasaEA - b.tasaEA);
 
-  // La tasa mínima y el monto máximo se calculan a partir de los datos, no se escriben a mano.
   const tasaMinima = Math.min(...creditos.map((credito) => credito.tasaEA));
   const montoMaximo = Math.max(...creditos.map((credito) => credito.montoMax));
 

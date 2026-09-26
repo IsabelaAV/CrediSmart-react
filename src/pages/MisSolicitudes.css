@@ -1,0 +1,138 @@
+.mis-solicitudes__busqueda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.mis-solicitudes__campo {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mis-solicitudes__acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mis-solicitudes__filtro-tipo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.mis-solicitudes__filtro-tipo select {
+  max-width: 280px;
+}
+
+.mis-solicitudes__conteo {
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.mis-solicitudes__vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.mis-solicitudes__vacio-icono {
+  font-size: 2.5rem;
+}
+
+.mis-solicitudes__lista {
+  display: grid;
+  gap: 1rem;
+}
+
+/* ---------- Tarjeta de solicitud ---------- */
+
+.solicitud-card {
+  padding: 1.5rem;
+}
+
+.solicitud-card__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.solicitud-card__radicado {
+  font-size: 1.05rem;
+  color: var(--brand-dark);
+}
+
+.solicitud-card__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.solicitud-card__etiqueta {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.solicitud-card__cuota {
+  color: var(--brand-dark);
+}
+
+.solicitud-card__pie {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* ---------- Enlace en alerta de éxito ---------- */
+
+.alerta__enlace {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+@media (max-width: 620px) {
+  .mis-solicitudes__busqueda {
+    flex-direction: column;
+  }
+
+  .mis-solicitudes__filtro-tipo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mis-solicitudes__filtro-tipo select {
+    max-width: none;
+  }
+
+  .solicitud-card__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .solicitud-card__pie {
+    flex-direction: column;
+  }
+}
