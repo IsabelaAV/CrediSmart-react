@@ -12,9 +12,10 @@ CreditSmart es la versión dinámica en React del sitio estático de la activida
 fintech ficticia colombiana donde una persona puede **comparar líneas de crédito, simular su cuota
 mensual y radicar una solicitud** sin salir del navegador.
 
-Todo el contenido sale de un archivo de datos (`src/data/creditsData.js`), no está escrito en el
-HTML: las tarjetas, los filtros, las opciones de los selects y hasta los productos del footer se
-generan recorriendo ese array.
+Los datos se consultan desde **Cloud Firestore**: las tarjetas, los filtros, las opciones de los
+selects y los productos del footer se generan con la información almacenada en la base de datos.
+El archivo `src/data/creditsData.js` funciona como fuente semilla para cargar el catálogo la primera
+vez, cuando la colección `creditos` está vacía.
 
 ### Qué se puede hacer
 
@@ -23,7 +24,8 @@ generan recorriendo ese array.
 | Inicio | `/` | Hero con métricas calculadas desde los datos, ventajas, créditos destacados (`.filter()` + `.sort()`) y pasos del proceso. |
 | Catálogo | `/catalogo` | Búsqueda en tiempo real (ignora tildes y mayúsculas), filtro por categoría, filtro por rango de monto, ordenamiento por tasa/monto/plazo, botón *Limpiar filtros* y mensaje "No hay créditos disponibles". |
 | Simulador | `/simulador` | Selector de crédito con buscador, sliders de monto y plazo limitados a cada producto y cálculo de cuota, total a pagar e intereses que se actualiza al instante. |
-| Solicitar crédito | `/solicitud` | Formulario 100% controlado con validaciones mientras se escribe, resumen en vivo de la cuota, envío que agrega la solicitud a un array en memoria, mensaje de éxito y limpieza automática. |
+| Solicitar crédito | `/solicitud` | Formulario 100% controlado con validaciones mientras se escribe, resumen en vivo de la cuota, envío que guarda la solicitud en Firestore, mensaje de éxito y limpieza automática. |
+| Mis solicitudes | `/mis-solicitudes` | Consulta solicitudes guardadas en Firestore, con búsqueda por correo electrónico y filtro por tipo de crédito. |
 
 ### Detalles de implementación que vale la pena mirar
 
@@ -35,12 +37,20 @@ generan recorriendo ese array.
   Incluye una regla de capacidad de pago: la cuota no puede superar el 40 % de los ingresos.
 - **Comunicación entre páginas**: al pulsar *Simular* o *Solicitar* en una tarjeta se navega con
   `state` de React Router, así el crédito (y el monto/plazo simulado) llegan preseleccionados.
+- **Persistencia con Firestore**: `src/firebase/Confing.js` inicializa Firebase y exporta la base de
+  datos. `src/services/creditosService.js` carga los créditos y siembra el catálogo inicial solo
+  cuando la colección `creditos` está vacía; `src/services/solicitudesService.js` guarda y consulta
+  las solicitudes en la colección `solicitudes`.
+- **Consulta de solicitudes**: la página `/mis-solicitudes` permite ver las solicitudes más
+  recientes o buscarlas por correo electrónico; los datos permanecen guardados en Firestore entre
+  sesiones.
 
 ## Tecnologías utilizadas
 
 - **React 19** (componentes funcionales y hooks: `useState`)
 - **React Router 7** (`BrowserRouter`, `Routes`, `Route`, `NavLink`, `Link`, `useLocation`)
 - **Vite 8** como bundler y servidor de desarrollo
+- **Firebase 12 / Cloud Firestore** para consultar el catálogo y guardar las solicitudes
 - **CSS3 propio** (variables CSS, Grid, Flexbox, `clamp()`, diseño responsive) — sin frameworks
 - **Oxlint** para el análisis estático
 - **JavaScript ES6+** (`.map()`, `.filter()`, `.sort()`, desestructuración, spread, módulos)
@@ -67,13 +77,21 @@ CrediSmart-react/
 │   │   ├── Footer.jsx
 │   │   └── Navbar.jsx
 │   ├── data/
-│   │   └── creditsData.js  # Array de productos, rangos y categorías
+│   │   └── creditsData.js  # Catálogo inicial para sembrar Firestore
+│   ├── firebase/
+│   │   └── Confing.js      # Inicialización de Firebase y Firestore
+│   ├── hooks/
+│   │   └── useCreditos.js  # Carga el catálogo desde Firestore
 │   ├── pages/              # Una página por ruta
 │   │   ├── Inicio.jsx
 │   │   ├── Catalogo.jsx
 │   │   ├── Simulador.jsx
 │   │   ├── Solicitud.jsx
+│   │   ├── MisSolicitudes.jsx
 │   │   └── NoEncontrada.jsx
+│   ├── services/
+│   │   ├── creditosService.js     # Lectura y carga inicial de créditos
+│   │   └── solicitudesService.js  # Persistencia y consulta de solicitudes
 │   ├── utils/
 │   │   ├── finanzas.js     # Formato COP y cálculo de cuota
 │   │   └── validaciones.js # Reglas del formulario
@@ -99,11 +117,29 @@ cd CrediSmart-react
 # 2. Instalar dependencias
 npm install
 
-# 3. Levantar el servidor de desarrollo
+# 3. Crear la configuración local de Firebase a partir de la plantilla
+cp .env.example .env
+
+# 4. Levantar el servidor de desarrollo
 npm run dev
 ```
 
-La aplicación queda disponible en <http://localhost:5173>.
+Antes de iniciar la aplicación, completa en `.env` los valores de configuración de tu aplicación
+web de Firebase. El proyecto debe tener Cloud Firestore habilitado y sus reglas deben permitir las
+operaciones que realiza la aplicación. La plantilla incluye los nombres exactos requeridos:
+
+```env
+VITE_FIREBSASE_API_KEY=
+VITE_FIREBSASE_AUTH_DOMAIN=
+VITE_FIREBSASE_PROJECT_ID=
+VITE_FIREBSASE_STORAGE_BUCKET=
+VITE_FIREBSASE_MESSAGING_SENDER_ID=
+VITE_FIREBSASE_APP_ID=
+```
+
+La aplicación queda disponible en <http://localhost:5173>. En la primera carga, si `creditos` está
+vacía, se agrega el catálogo inicial; las solicitudes enviadas desde el formulario quedan guardadas
+en `solicitudes`.
 
 Otros comandos:
 
